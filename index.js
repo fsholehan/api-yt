@@ -3,7 +3,7 @@ const ytdl = require("ytdl-core");
 const ytsr = require("ytsr");
 const app = express();
 
-const port = 8000;
+const port = process.env.PORT || 8000;
 
 app.get("/", (req, res) => {
   res.send("Welcome to API YT");
@@ -16,7 +16,7 @@ app.get("/search/:keyword", async (req, res) => {
     const filter1 = filters1.get("Type").get("Video");
     const searchResults = await ytsr(filter1.url);
 
-    res.json(searchResults);
+    res.json(searchResults.items);
   } catch (error) {
     console.log(error);
   }
