@@ -1,6 +1,7 @@
 const express = require("express");
 const ytdl = require("ytdl-core");
 const ytsr = require("ytsr");
+const AutoComplete = require("youtube-autocomplete");
 const app = express();
 
 const port = process.env.PORT || 8000;
@@ -31,6 +32,15 @@ app.get("/detail/:videoId", async (req, res) => {
   } catch (error) {
     console.log(error.message);
   }
+});
+
+//autocomplete
+app.get("/queries", (req, res) => {
+  const { keyword } = req.query;
+  AutoComplete(keyword, (err, queries) => {
+    if (err) throw err;
+    res.json(queries[1]);
+  });
 });
 
 app.listen(port, () => console.log(`Server running on, ${port}`));
