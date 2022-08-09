@@ -36,7 +36,7 @@ app.get("/detail/:videoId", async (req, res) => {
 
 //autocomplete
 app.get("/queries", (req, res) => {
-  const { keyword } = req.query;
+  const { keyword } = req.params;
   AutoComplete(keyword, (err, queries) => {
     if (err) throw err;
     res.json(queries[1]);
