@@ -1,6 +1,7 @@
 const express = require("express");
 const ytdl = require("ytdl-core");
 const ytsr = require("ytsr");
+const ytpl = require("ytpl");
 const AutoComplete = require("youtube-autocomplete");
 const app = express();
 
@@ -73,12 +74,28 @@ app.get("/queries/:keyword", (req, res) => {
 
 //spell check
 app.get("/spellcheck/:keyword", async (req, res) => {
-  const { keyword } = req.params;
-  const searchResults = await ytsr(keyword);
-  res.json({
-    query: searchResults.originalQuery,
-    check: searchResults.correctedQuery,
-  });
+  try {
+    const { keyword } = req.params;
+    const searchResults = await ytsr(keyword);
+    res.json({
+      query: searchResults.originalQuery,
+      check: searchResults.correctedQuery,
+    });
+  } catch (error) {
+    console.log(error);
+  }
+});
+
+//get all playlist video
+app.get("/playlist/:playlistId", async (req, res) => {
+  try {
+    const { playlistId } = req.params;
+    const playlist = await ytpl(playlistId);
+
+    res.json(playlist);
+  } catch (error) {
+    console.log(error);
+  }
 });
 
 app.listen(port, () => console.log(`Server running on, ${port}`));
