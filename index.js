@@ -39,6 +39,20 @@ app.get("/search/playlist/:keyword", async (req, res) => {
   }
 });
 
+//channel
+app.get("/search/channel/:keyword", async (req, res) => {
+  const { keyword } = req.params;
+  try {
+    const filters1 = await ytsr.getFilters(keyword);
+    const filter1 = filters1.get("Type").get("Channel");
+    const searchResults = await ytsr(filter1.url);
+
+    res.json(searchResults.items);
+  } catch (error) {
+    console.log(error);
+  }
+});
+
 //get video by id
 app.get("/detail/:videoId", async (req, res) => {
   try {
@@ -93,6 +107,31 @@ app.get("/playlist/:playlistId", async (req, res) => {
     const playlist = await ytpl(playlistId);
 
     res.json(playlist);
+  } catch (error) {
+    console.log(error);
+  }
+});
+
+//get channel information
+app.get("/channel/:channelId", async (req, res) => {
+  try {
+    const { channelId } = req.params;
+    const channel = await ytpl(channelId);
+
+    res.json(channel);
+  } catch (error) {
+    console.log(error);
+  }
+});
+
+// video to audio
+app.get("/music/:videoId", async (req, res) => {
+  try {
+    const { videoId } = req.params;
+    let info = await ytdl.getInfo(videoId);
+    let audioFormats = ytdl.filterFormats(info.formats, "audioonly");
+    // console.log("Formats with only audio: " + audioFormats);
+    res.json(audioFormats);
   } catch (error) {
     console.log(error);
   }
