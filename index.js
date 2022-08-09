@@ -10,6 +10,7 @@ app.get("/", (req, res) => {
   res.send("Welcome to API YT");
 });
 
+//video
 app.get("/search/:keyword", async (req, res) => {
   const { keyword } = req.params;
   try {
@@ -23,6 +24,21 @@ app.get("/search/:keyword", async (req, res) => {
   }
 });
 
+//playlist
+app.get("/search/playlist/:keyword", async (req, res) => {
+  const { keyword } = req.params;
+  try {
+    const filters1 = await ytsr.getFilters(keyword);
+    const filter1 = filters1.get("Type").get("Playlist");
+    const searchResults = await ytsr(filter1.url);
+
+    res.json(searchResults.items);
+  } catch (error) {
+    console.log(error);
+  }
+});
+
+//get video by id
 app.get("/detail/:videoId", async (req, res) => {
   try {
     const { videoId } = req.params;
@@ -34,12 +50,34 @@ app.get("/detail/:videoId", async (req, res) => {
   }
 });
 
+//related videos
+app.get("/related/:videoId", async (req, res) => {
+  try {
+    const { videoId } = req.params;
+    let info = await ytdl.getInfo(videoId);
+    let related_video = info.related_videos;
+    res.json(related_video);
+  } catch (error) {
+    console.log(error);
+  }
+});
+
 //autocomplete
 app.get("/queries/:keyword", (req, res) => {
   const { keyword } = req.params;
   AutoComplete(keyword, (err, queries) => {
     if (err) throw err;
     res.json(queries[1]);
+  });
+});
+
+//spell check
+app.get("/spellcheck/:keyword", async (req, res) => {
+  const { keyword } = req.params;
+  const searchResults = await ytsr(keyword);
+  res.json({
+    query: searchResults.originalQuery,
+    check: searchResults.correctedQuery,
   });
 });
 
