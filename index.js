@@ -4,6 +4,7 @@ const ytsr = require("ytsr");
 const ytpl = require("ytpl");
 const AutoComplete = require("youtube-autocomplete");
 const app = express();
+const ytch = require("yt-channel-info");
 
 const port = process.env.PORT || 8000;
 
@@ -114,14 +115,23 @@ app.get("/playlist/:playlistId", async (req, res) => {
 
 //get channel information
 app.get("/channel/:channelId", async (req, res) => {
-  try {
-    const { channelId } = req.params;
-    const channel = await ytpl(channelId);
-
-    res.json(channel);
-  } catch (error) {
-    console.log(error);
-  }
+  const { channelId } = req.params;
+  const payload = {
+    channelId,
+  };
+  ytch
+    .getChannelInfo(payload)
+    .then((response) => {
+      if (!response.alertMessage) {
+        res.json(response);
+      } else {
+        console.log("Channel could not be found.");
+        // throw response.alertMessage
+      }
+    })
+    .catch((err) => {
+      console.log(err);
+    });
 });
 
 // video to audio
