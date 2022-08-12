@@ -5,8 +5,11 @@ const ytpl = require("ytpl");
 const AutoComplete = require("youtube-autocomplete");
 const app = express();
 const ytch = require("yt-channel-info");
+const cors = require("cors");
 
 const port = process.env.PORT || 8000;
+
+app.use(cors());
 
 app.get("/", (req, res) => {
   res.send("Welcome to API YT");
